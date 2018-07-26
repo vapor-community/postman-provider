@@ -14,7 +14,7 @@ Included in `Postman` is a `PostmanClient` which you can use to get and update y
 In your `Package.swift` file, add the following:
 
 ```swift
-.package(url: "https://github.com/vapor-community/stripe-provider.git", from: "1.0.0")
+.package(url: "https://github.com/vapor-community/postman-provider.git", from: "1.0.0")
 ```
 
 Register the configuration and the provider.
