@@ -3,15 +3,17 @@ import Vapor
 public final class PostmanClient: Service {
     let httpClient: Client
     let apiKey: String
+    let environmentUID: String
     let apiEndpoint = "https://api.getpostman.com"
 
-    public init(client: Client, apiKey: String) {
+    public init(client: Client, apiKey: String, environmentUID: String) {
         self.httpClient = client
         self.apiKey = apiKey
+        self.environmentUID = environmentUID
     }
 
-    private var environmentsEndpoint: String {
-        return apiEndpoint + "/environments"
+    private var environmentEndpoint: String {
+        return apiEndpoint + "/environments/\(environmentUID)"
     }
 
     private var headers: HTTPHeaders {
@@ -21,23 +23,23 @@ public final class PostmanClient: Service {
         return headers
     }
 
+    private struct EnvironmentContainer: Content {
+        let environment: PostmanEnvironment
+    }
+
     private struct ErrorResponse: Codable {
         let error: PostmanError
     }
 
-    public func getEnvironments() -> Future<[PostmanEnvironment]> {
+    public func getEnvironment() -> Future<PostmanEnvironment> {
 
-        let request = httpClient.get(environmentsEndpoint, headers: headers)
+        let request = httpClient.get(environmentEndpoint, headers: headers)
 
         return request.map { response in
             switch response.http.status {
             case .ok:
-                struct EnvironmentsResponse: Codable {
-                    let environments: [PostmanEnvironment]
-                }
-
-                let environments = try JSONDecoder().decode(EnvironmentsResponse.self, from: response.http.body.data ?? Data())
-                return environments.environments
+                let container = try JSONDecoder().decode(EnvironmentContainer.self, from: response.http.body.data ?? Data())
+                return container.environment
 
             default:
                 let error = try JSONDecoder().decode(ErrorResponse.self, from: response.http.body.data ?? Data())
@@ -48,28 +50,9 @@ public final class PostmanClient: Service {
 
     public func update(_ environment: PostmanEnvironment) -> Future<Void> {
 
-        struct EnvironmentParameters: Content {
-            let environment: Environment
+        let parameters = EnvironmentContainer(environment: environment)
 
-            struct Environment: Codable {
-                let name: String
-                let values: [Value]
-
-                struct Value: Codable {
-                    let key: String
-                    let value: String
-                }
-            }
-        }
-
-        let parameters = EnvironmentParameters(
-            environment: .init(
-                name: environment.name,
-                values: environment.values.map {
-                    .init(key: $0.key, value: $0.value)
-            }))
-
-        let request = httpClient.put(environmentsEndpoint + "/\(environment.uid)", headers: headers, beforeSend: { request in
+        let request = httpClient.put(environmentEndpoint, headers: headers, beforeSend: { request in
             try request.content.encode(parameters)
         })
 
