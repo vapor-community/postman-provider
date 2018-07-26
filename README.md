@@ -55,7 +55,7 @@ postmanClient.getEnvironment().map { environment in
 }
 ```
 
-*Note: The values are the *initial* environment variables, not the current.*
+*Note: The values are the *initial* environment variable values, not the current.*
 
 ### Updating Your Environment
 
