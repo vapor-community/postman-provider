@@ -20,7 +20,7 @@ In your `Package.swift` file, add the following:
 Register the configuration and the provider.
 
 ```swift
-let config = PostmanConfi(apiKey: "your-api-key")
+let config = PostmanConfig(apiKey: "your-api-key", environmentUID: "your-environment-uid")
 
 services.register(config)
 
@@ -30,6 +30,7 @@ app = try Application(services: services)
 
 postmanClient = try app.make(PostmanClient.self)
 ```
+*Note: `environmentUID` is your environment's `"uid"` and **not** your environment's `"id"`.*
 
 ## Using the API
 
@@ -37,17 +38,17 @@ postmanClient = try app.make(PostmanClient.self)
 
 ```swift
 public struct PostmanEnvironment: Content {
-    public let uid: String
     public var name: String
     public var values: [String: String]
 }
 ```
 
-Use the `PostmanClient` to get your environments:
+Use the `PostmanClient` to get your environment:
 
 ```swift
-postmanClient.getEnvironments().map { environments in
-    ...
+postmanClient.getEnvironment().map { environment in
+    environment.name
+    environment.values
 }
 ```
 
@@ -55,7 +56,6 @@ You can also update your environment:
 
 ```swift
 let updatedEnvironment = PostmanEnvironment(
-    uid: "your-environment-uid", // This doesn't change
     name: "Updated Name",
     values: ["token": updatedToken, "testUserID": newTestUserID]
 )
