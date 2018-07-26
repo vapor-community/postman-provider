@@ -42,7 +42,7 @@ public struct PostmanEnvironment: Content {
     public var values: [String: String]
 }
 ```
-There is a distinction between initial environment variables and current environments. Initial environment varaibles values are synced across workspaces and teams if you share the environment. Current environment variable values are the values that are actually used when making requests. Until they are changed, they assume the initial values. Read more about environment variables [here](https://www.getpostman.com/docs/v6/postman/environments_and_globals/variables). 
+There is a distinction between initial and current environment variable values. Initial environment varaible values are synced across workspaces and teams if you share the environment. Current environment variable values are the values that are actually used when making requests. Until they are changed, they assume the initial values. Read more about environment variables [here](https://www.getpostman.com/docs/v6/postman/environments_and_globals/variables). 
 
 ### Getting Your Environment
 
