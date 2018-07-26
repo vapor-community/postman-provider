@@ -1,7 +1,7 @@
 import XCTest
 
-import postman_providerTests
+import PostmanTests
 
 var tests = [XCTestCaseEntry]()
-tests += postman_providerTests.allTests()
+tests += PostmanTests.allTests()
 XCTMain(tests)
