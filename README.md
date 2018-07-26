@@ -7,7 +7,7 @@
 
 [Postman](https://www.getpostman.com/docs/v6/postman/postman_api/intro_api) is a developer tool for making network requests and testing APIs.
 
-Included in `Postman` is a `PostmanClient` which you can use to get and update your Postman [environments](https://www.getpostman.com/docs/v6/postman/environments_and_globals/manage_environments), especially useful for updating environment variables. 
+Included in `Postman` is a `PostmanClient` which you can use to get and update your Postman [environment](https://www.getpostman.com/docs/v6/postman/environments_and_globals/manage_environments), especially useful for updating environment variables. 
 
 ## Getting Started
 
@@ -62,6 +62,8 @@ let updatedEnvironment = PostmanEnvironment(
 
 postmanClient.update(updatedEnvironment) // Future<Void>
 ```
+
+It is importnat to note that when you update your environment, all of the environment variables will be replaced by the values you provide. So if an existing environment variable is not included in `values` it will be deleted.
 
 ## Error Handling
 
