@@ -42,6 +42,9 @@ public struct PostmanEnvironment: Content {
     public var values: [String: String]
 }
 ```
+There is a distinction between initial environment variables and current environments. Initial environment varaibles values are synced across workspaces and teams if you share the environment. Current environment variable values are the values that are actually used when making requests. Until they are changed, they assume the initial values. Read more about environment variables [here](https://www.getpostman.com/docs/v6/postman/environments_and_globals/variables). 
+
+### Getting Your Environment
 
 Use the `PostmanClient` to get your environment:
 
@@ -52,7 +55,15 @@ postmanClient.getEnvironment().map { environment in
 }
 ```
 
-You can also update your environment:
+*Note: The values are the *initial* environment variables, not the current.*
+
+### Updating Your Environment
+
+The client provides methods for updating both the initial environment variables (`updateInitialEnvironment(...)`) and the current environment variables by using a workaround, discussed later, (`updateCurrentEnvironment(...)`). Environments can be updated using two different strategies:
+ 1. By replacing the environment entirely (`update*Environment(byReplacingWith:`)
+ 2. By merging values from a new environment into the existing environment using a merge strategy when duplicate keys are encountered (`update*Environment(byMergingWith:strategy:)`).
+
+Updating your environment's initial environment variables...
 
 ```swift
 let updatedEnvironment = PostmanEnvironment(
@@ -60,10 +71,26 @@ let updatedEnvironment = PostmanEnvironment(
     values: ["token": updatedToken, "testUserID": newTestUserID]
 )
 
-postmanClient.update(updatedEnvironment) // Future<Void>
+// ... by replacing the entire environment
+postmanClient.updateInitialEnvironment(byReplacingWith: updatedEnvironment)
+
+// ... by merging a new environment into the existing environment
+postmanClient.updateInitialEnvironment(byMergingWith: updatedEnvironment, strategy: .useNewValueForDuplicateKeys)
 ```
 
-It is importnat to note that when you update your environment, all of the environment variables will be replaced by the values you provide. So if an existing environment variable is not included in `values` it will be deleted.
+The same calls existing for updating your environment's current environment variables.
+
+It is important to note that when you update your environment by replacing, the entire environment will be replaced. So if an existing environment variable is not included in `values` it will be deleted.
+
+There are three different merge strategies to determine which value should be used when a duplicate key is found between the two environments being merged.
+
+1. `keepCurrentValueForDuplicateKeys`: Keeps the current value.
+2. `useNewValueForDuplicateKeys`: Uses the new value.
+3. `closure((String, String) -> String)`: Use a closure that accepts two strings, the current and new values respectively, and returns the string to use as the value.
+
+#### A note on updating the current environment:
+
+The Postman API only allows you to update the initial environment variable values. So if you update and existing environment using the API, the requests you make will have the old "current" value. However, because current values assume initial values when they are first created, if you delete all of the environment variables and then recreate them, initial and current values will be in sync with one another. So the `updateCurrentEnvironment` variants do exactly that, they create a copy of the environment and its variables, delete the variables, and then recreate them. Kind of hacky, but it works! That said, because environments are being wiped and recreated, make sure you have a backup of your environment just in case anything goes wrong.
 
 ## Error Handling
 
