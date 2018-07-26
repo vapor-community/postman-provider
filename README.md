@@ -59,11 +59,11 @@ postmanClient.getEnvironment().map { environment in
 
 ### Updating Your Environment
 
-The client provides methods for updating both the initial environment variables (`updateInitialEnvironment(...)`) and the current environment variables by using a workaround, discussed later, (`updateCurrentEnvironment(...)`). Environments can be updated using two different strategies:
+The client provides methods for updating both the initial environment variable values (`updateInitialEnvironment(...)`) and the current environment variable values by using a workaround, discussed later, (`updateCurrentEnvironment(...)`). Environments can be updated using two different strategies:
  1. By replacing the environment entirely (`update*Environment(byReplacingWith:`)
  2. By merging values from a new environment into the existing environment using a merge strategy when duplicate keys are encountered (`update*Environment(byMergingWith:strategy:)`).
 
-Updating your environment's initial environment variables...
+You can update your environment's initial environment variable values by:
 
 ```swift
 let updatedEnvironment = PostmanEnvironment(
@@ -71,22 +71,26 @@ let updatedEnvironment = PostmanEnvironment(
     values: ["token": updatedToken, "testUserID": newTestUserID]
 )
 
-// ... by replacing the entire environment
+// ... Replacing the entire environment.
 postmanClient.updateInitialEnvironment(byReplacingWith: updatedEnvironment)
 
-// ... by merging a new environment into the existing environment
+// ... Or by merging a new environment into the existing environment.
 postmanClient.updateInitialEnvironment(byMergingWith: updatedEnvironment, strategy: .useNewValueForDuplicateKeys)
 ```
 
-The same calls existing for updating your environment's current environment variables.
+The same calls existing for updating your environment's current environment variable values.
 
-It is important to note that when you update your environment by replacing, the entire environment will be replaced. So if an existing environment variable is not included in `values` it will be deleted.
+> It is important to note that when you update your environment by replacing, the entire environment will be replaced. So if an existing environment variable is not included in `values` it will be deleted.
+
+### Merge Strategies
 
 There are three different merge strategies to determine which value should be used when a duplicate key is found between the two environments being merged.
 
-1. `keepCurrentValueForDuplicateKeys`: Keeps the current value.
-2. `useNewValueForDuplicateKeys`: Uses the new value.
-3. `closure((String, String) -> String)`: Use a closure that accepts two strings, the current and new values respectively, and returns the string to use as the value.
+| Strategy | Description |
+| --------- | ------------- |
+| `keepCurrentValueForDuplicateKeys` | Keeps the current value. |
+| `useNewValueForDuplicateKeys` | Uses the new value. |
+| `closure((String, String) -> String)` | Use a closure that accepts two strings, the current and new values respectively, and returns the string to use as the value. |
 
 #### A note on updating the current environment:
 
