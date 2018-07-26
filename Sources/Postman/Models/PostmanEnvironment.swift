@@ -13,7 +13,7 @@ public struct PostmanEnvironment: Content {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
         let values: [Value] = try container.decode([Value].self, forKey: .values)
-        self.values = Dictionary(pairs: values.map { ($0.key, $0.value) })
+        self.values = Dictionary(uniqueKeysWithValues: values.map { ($0.key, $0.value) })
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,11 +32,4 @@ public struct PostmanEnvironment: Content {
 private struct Value: Codable {
     let key: String
     let value: String
-}
-
-private extension Dictionary {
-    init(pairs: [(Key, Value)]) {
-        self = [:]
-        pairs.forEach { self[$0.0] = $0.1 }
-    }
 }
