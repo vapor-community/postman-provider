@@ -1,6 +1,11 @@
 # Vapor Postman Provider
 
-[Postman](https://www.getpostman.com/docs/v6/postman/postman_api/intro_api) is a developer tool for...
+[![Swift](http://img.shields.io/badge/swift-4.2-brightgreen.svg)](https://swift.org)
+[![Vapor](http://img.shields.io/badge/vapor-3.0-brightgreen.svg)](https://vapor.codes)
+[![CircleCI](https://circleci.com/gh/vapor-community/postman-provider.svg?style=shield)](https://circleci.com/gh/vapor-community/postman-provider)
+[![MIT License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+
+[Postman](https://www.getpostman.com/docs/v6/postman/postman_api/intro_api) is a developer tool for making network requests and testing APIs.
 
 Included in `Postman` is a `PostmanClient` which you can use to get and update your Postman [environments](https://www.getpostman.com/docs/v6/postman/environments_and_globals/manage_environments), especially useful for updating environment variables. 
 
