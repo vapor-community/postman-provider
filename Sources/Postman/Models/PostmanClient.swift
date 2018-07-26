@@ -25,7 +25,7 @@ public final class PostmanClient: Service {
         let error: PostmanError
     }
 
-    public func getEnvironments() throws -> Future<[PostmanEnvironment]> {
+    public func getEnvironments() -> Future<[PostmanEnvironment]> {
 
         let request = httpClient.get(environmentsEndpoint, headers: headers)
 
@@ -46,7 +46,7 @@ public final class PostmanClient: Service {
         }
     }
 
-    public func update(environment: PostmanEnvironment) throws -> Future<Void> {
+    public func update(_ environment: PostmanEnvironment) -> Future<Void> {
 
         struct EnvironmentParameters: Content {
             let environment: Environment
