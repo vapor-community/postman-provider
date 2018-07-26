@@ -2,9 +2,11 @@ import Vapor
 
 public struct PostmanConfig: Service {
     let apiKey: String
+    let environmentUID: String
 
-    public init(apiKey: String) {
+    public init(apiKey: String, environmentUID: String) {
         self.apiKey = apiKey
+        self.environmentUID = environmentUID
     }
 }
 
@@ -21,7 +23,10 @@ public final class PostmanProvider: Provider {
         services.register { container -> PostmanClient in
             let httpClient = try container.make(Client.self)
             let config = try container.make(PostmanConfig.self)
-            return PostmanClient(client: httpClient, apiKey: config.apiKey)
+            return PostmanClient(
+                client: httpClient,
+                apiKey: config.apiKey,
+                environmentUID: config.environmentUID)
         }
     }
 }
